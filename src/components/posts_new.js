@@ -1,8 +1,25 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createPost } from '../actions';
+
+const FIELDS = {
+  title: {
+    type: 'input',
+    label: 'Title for Post'
+  },
+  categories: {
+    type: 'input',
+    label: 'Enter categories for post'
+  },
+  content: {
+    type: 'textarea',
+    label: 'Post Content'
+  }
+}
+// ['title', 'categories', 'content'];
 
 class PostsNew extends Component {
   renderField(field) {
@@ -59,22 +76,20 @@ class PostsNew extends Component {
 function validate(values) {
   const errors = {};
 
-  if(!values.title) {
-    errors.title = "Enter a title"
-  }
-  if(!values.categories) {
-    errors.categories = "Enter a category"
-  }
-  if(!values.content) {
-    errors.content = "Enter some content"
-  }
+  _.each(FIELDS, (type, field) => {
+    if (!values[field]) {
+      errors[field] = `Enter ${field}`
+    }
+  });
+
   return errors;
 }
 
 
 export default reduxForm({
   validate,
-  form: 'PostsNewForm'
+  form: 'PostsNewForm',
+  fields: _.keys(FIELDS)
 })(
   connect(null, { createPost })(PostsNew)
 );
